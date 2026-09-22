@@ -1,9 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
-    <SeekBarPreference app:key="text_size" app:title="Text Size" app:min="150" app:max="500" app:defaultValue="350" app:showSeekBarValue="true" />
-    <ListPreference app:key="bg_color" app:title="Background Color" app:entries="@array/color_names" app:entryValues="@array/color_hexes" app:defaultValue="#444444" />
-    <SeekBarPreference app:key="warning_threshold" app:title="Low Battery Warning Level (%)" app:min="5" app:max="30" app:defaultValue="15" app:showSeekBarValue="true" />
-    <SwitchPreferenceCompat app:key="use_24_hour" app:title="Use 24-Hour Time" app:summaryOff="12-hour format (e.g., 2:30 PM)" app:summaryOn="24-hour format (e.g., 14:30)" app:defaultValue="false" />
-    <Preference app:key="apply_wallpaper" app:title="Apply Wallpaper" app:summary="Open the system screen to set this as your background" />
+<PreferenceScreen 
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    
+    <SeekBarPreference
+        app:key="text_size"
+        app:title="Text Size"
+        app:min="150"
+        android:max="500"
+        app:defaultValue="350"
+        app:showSeekBarValue="true" />
+        
+    <ListPreference
+        app:key="bg_color"
+        app:title="Background Color"
+        app:entries="@array/color_names"
+        app:entryValues="@array/color_hexes"
+        app:defaultValue="#444444" />
+        
+    <SeekBarPreference
+        app:key="warning_threshold"
+        app:title="Low Battery Warning Level (%)"
+        app:min="5"
+        android:max="30"
+        app:defaultValue="15"
+        app:showSeekBarValue="true" />
+        
+    <SwitchPreferenceCompat
+        app:key="use_24_hour"
+        app:title="Use 24-Hour Time"
+        app:summaryOff="12-hour format (e.g., 2:30 PM)"
+        app:summaryOn="24-hour format (e.g., 14:30)"
+        app:defaultValue="false" />
+        
+    <Preference
+        app:key="apply_wallpaper"
+        app:title="Apply Wallpaper"
+        app:summary="Open the system screen to set this as your background" />
+        
 </PreferenceScreen>
-
