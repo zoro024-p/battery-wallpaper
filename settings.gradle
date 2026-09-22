@@ -1,0 +1,3 @@
+rootProject.name = "BatteryWallpaper"
+include ':app'
+
