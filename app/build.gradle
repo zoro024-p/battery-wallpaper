@@ -13,6 +13,15 @@ android {
         versionCode 1
         versionName "1.0"
     }
+
+    buildTypes {
+        release {
+            signingConfig signingConfigs.debug
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt')
+        }
+    }
 }
 
 dependencies {
