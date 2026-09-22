@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="color_names">
+        <item>Dark Gray</item>
+        <item>Pitch Black</item>
+        <item>Deep Navy</item>
+        <item>Forest Green</item>
+    </string-array>
+    <string-array name="color_hexes">
+        <item>#444444</item>
+        <item>#000000</item>
+        <item>#001F3F</item>
+        <item>#102A14</item>
+    </string-array>
+</resources>
