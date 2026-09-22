@@ -1,5 +1,6 @@
 # battery-wallpaper
 dedicated to my mother
+
 Battery Wallpaper
 A lightweight, hardware-accelerated Android Live Wallpaper built specifically for elderly users, featuring a high-visibility clock, calendar date, and a large color-coded battery status indicator.
 Features
