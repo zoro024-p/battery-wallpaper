@@ -3,11 +3,11 @@ plugins {
 }
 
 android {
-    namespace 'com.yourpackage.batterywallpaper'
+    namespace 'com.zoro.batterywallpaper'
     compileSdk 34
 
     defaultConfig {
-        applicationId "com.yourpackage.batterywallpaper"
+        applicationId "com.zoro.batterywallpaper"
         minSdk 26
         targetSdk 34
         versionCode 1
