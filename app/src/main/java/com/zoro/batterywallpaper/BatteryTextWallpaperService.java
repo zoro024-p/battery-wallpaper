@@ -70,6 +70,10 @@ public class BatteryTextWallpaperService extends WallpaperService {
         private long lastCachedMinute = -1L;
         private int cachedDayOfYear = -1;
         private float clockHeight, dateHeight, batteryBlockHeight;
+        
+        // Cached trigonometric values for orbital shift
+        private float shiftCosFactor = 0f;
+        private float shiftSinFactor = 0f;
 
         private volatile Bitmap bgBitmap = null;
         private boolean useCustomBg = false;
@@ -228,6 +232,11 @@ public class BatteryTextWallpaperService extends WallpaperService {
                 cachedTimeText = timeFormat.format(calendarDate);
                 clockPaint.setTextSize(baseClockTextSize);
                 cachedClockWidth = clockPaint.measureText(cachedTimeText);
+                
+                // Cache trigonometric shifts once per minute
+                shiftCosFactor = (float) Math.cos(currentMinute * 0.1);
+                shiftSinFactor = (float) Math.sin(currentMinute * 0.1);
+                
                 lastCachedMinute = currentMinute;
             }
         }
@@ -316,8 +325,9 @@ public class BatteryTextWallpaperService extends WallpaperService {
                 rawSampled.recycle();
 
                 if (bgDimOpacity > 0) {
-                    int alpha = (int) (bgDimOpacity * 2.55f);
-                    bakeCanvas.drawColor(Color.argb(alpha, 0, 0, 0));
+                    // Bitwise shift is faster than Color.argb()
+                    int alphaColor = (Math.round(bgDimOpacity * 2.55f) << 24) | 0x00000000;
+                    bakeCanvas.drawColor(alphaColor);
                 }
 
                 mainHandler.post(() -> {
@@ -427,38 +437,28 @@ public class BatteryTextWallpaperService extends WallpaperService {
                     updateTimeString(false);
                     updateDateString(false);
 
-                    textPaint.setTextSize(baseBatteryTextSize);
-                    clockPaint.setTextSize(baseClockTextSize);
-                    datePaint.setTextSize(baseDateTextSize);
-
+                    float screenWidth = canvas.getWidth();
+                    float screenHeight = canvas.getHeight();
+                    
                     float rawIconWidth = baseBatteryTextSize * 1.25f;
                     float rawBatteryBlockWidth = rawIconWidth + (rawIconWidth * 0.08f) + (baseBatteryTextSize * 0.25f) + cachedBatteryTextWidth;
 
-                    float screenWidth = canvas.getWidth();
-                    float screenHeight = canvas.getHeight();
-                    float maxAllowedWidth = screenWidth * 0.92f;
+                    // Compute scaling layout once
                     float widestElement = Math.max(Math.max(cachedClockWidth, cachedDateWidth), rawBatteryBlockWidth);
+                    float maxAllowedWidth = screenWidth * 0.92f;
+                    float finalRatio = widestElement > maxAllowedWidth ? (maxAllowedWidth / widestElement) : 1f;
 
-                    float localClockHeight = clockHeight;
-                    float localDateHeight = dateHeight;
-                    float localBatteryBlockHeight = batteryBlockHeight;
-
-                    if (widestElement > maxAllowedWidth) {
-                        float scaleRatio = maxAllowedWidth / widestElement;
-                        textPaint.setTextSize(baseBatteryTextSize * scaleRatio);
-                        clockPaint.setTextSize(baseClockTextSize * scaleRatio);
-                        datePaint.setTextSize(baseDateTextSize * scaleRatio);
-                        localClockHeight *= scaleRatio;
-                        localDateHeight *= scaleRatio;
-                        localBatteryBlockHeight *= scaleRatio;
-                    }
-
-                    float gap1 = 24f;
-                    float gap2 = 64f;
-                    float totalHeight = localClockHeight + gap1 + localDateHeight + gap2 + localBatteryBlockHeight;
-
+                    float scaledClockHeight = clockHeight * finalRatio;
+                    float scaledDateHeight = dateHeight * finalRatio;
+                    float scaledBatteryBlockHeight = batteryBlockHeight * finalRatio;
+                    float gap1 = 24f * finalRatio;
+                    float gap2 = 64f * finalRatio;
+                    
+                    float totalHeight = scaledClockHeight + gap1 + scaledDateHeight + gap2 + scaledBatteryBlockHeight;
                     float maxAllowedHeight = screenHeight * 0.88f;
+
                     if (totalHeight > maxAllowedHeight) {
                         float hRatio = maxAllowedHeight / totalHeight;
-                        textPaint.setTextSize(textPaint.getTextSize() * hRatio);
-               
+                        finalRatio *= hRatio;
+                        gap1 *= hRatio;
+                       
