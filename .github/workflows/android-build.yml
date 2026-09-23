@@ -9,6 +9,9 @@ on:
       - 'v*'
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   build:
     name: Build Release APKs
@@ -26,25 +29,39 @@ jobs:
 
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v3
-
-      - name: Grant Execute Permission to Gradlew
-        run: chmod +x gradlew
+        with:
+          gradle-version: '8.7'
 
       - name: Build Release APKs with Gradle
-        run: ./gradlew assembleRelease --stacktrace
+        run: |
+          if [ -f "./gradlew" ]; then
+            echo "Using root gradlew wrapper..."
+            chmod +x ./gradlew
+            ./gradlew assembleRelease --stacktrace
+          elif [ -n "$(find . -maxdepth 2 -name gradlew -print -quit)" ]; then
+            WRAPPER=$(find . -maxdepth 2 -name gradlew -print -quit)
+            PROJECT_DIR=$(dirname "$WRAPPER")
+            echo "Found gradlew in $PROJECT_DIR. Navigating and building..."
+            cd "$PROJECT_DIR"
+            chmod +x ./gradlew
+            ./gradlew assembleRelease --stacktrace
+          else
+            echo "No gradlew found. Building directly using system Gradle..."
+            gradle assembleRelease --stacktrace
+          fi
 
       - name: Upload APKs as Workflow Artifacts
         uses: actions/upload-artifact@v4
         with:
           name: battery-wallpaper-apks
-          path: app/build/outputs/apk/release/*.apk
+          path: "**/build/outputs/apk/release/*.apk"
           retention-days: 30
 
       - name: Publish GitHub Release Assets
         if: startsWith(github.ref, 'refs/tags/v')
         uses: softprops/action-gh-release@v2
         with:
-          files: app/build/outputs/apk/release/*.apk
+          files: "**/build/outputs/apk/release/*.apk"
           generate_release_notes: true
           draft: false
           prerelease: false
