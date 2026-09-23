@@ -30,6 +30,8 @@ android {
             minifyEnabled true
             shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            // Automatically signs all release APKs with standard debug keys
+            signingConfig signingConfigs.debug
         }
         debug {
             minifyEnabled false
