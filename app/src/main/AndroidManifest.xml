@@ -1,35 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
-    
-    <uses-permission android:name="android.permission.BATTERY_STATS"/>
+
+    <uses-feature
+        android:name="android.software.live_wallpaper"
+        android:required="true" />
 
     <application
         android:allowBackup="true"
-        android:label="Battery Wallpaper"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.AppCompat.DayNight">
-        
-        <service
-            android:name=".BatteryTextWallpaperService"
+        android:theme="@style/Theme.AppCompat.DayNight.NoActionBar">
+
+        <activity
+            android:name="com.zoro.batterywallpaper.SettingsActivity"
             android:exported="true"
+            android:label="Wallpaper Settings"
+            android:theme="@style/Theme.AppCompat.DayNight.DarkActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <service
+            android:name="com.zoro.batterywallpaper.BatteryTextWallpaperService"
+            android:exported="true"
+            android:label="@string/app_name"
             android:permission="android.permission.BIND_WALLPAPER">
             <intent-filter>
                 <action android:name="android.service.wallpaper.WallpaperService" />
             </intent-filter>
             <meta-data
                 android:name="android.service.wallpaper"
-                android:resource="@xml/wallpaper_info" />
+                android:resource="@xml/wallpaper" />
         </service>
 
-        <activity
-            android:name=".SettingsActivity"
-            android:exported="true"
-            android:label="Wallpaper Settings">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
     </application>
-</manifest>
 
+</manifest>
